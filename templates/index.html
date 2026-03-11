@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tomasulo Algorithm Simulator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+    <main class="container">
+        <header class="header">
+            <h1>Tomasulo Algorithm Simulator</h1>
+            <div class="cycle-card">
+                <span class="cycle-label">Current Cycle</span>
+                <span class="cycle-value">{{ state.cycle }}</span>
+            </div>
+        </header>
+
+        <section class="controls">
+            <form action="{{ url_for('previous_cycle') }}" method="post">
+                <button type="submit" {% if state.cycle == 0 %}disabled{% endif %}>Previous Cycle</button>
+            </form>
+            <form action="{{ url_for('next_cycle') }}" method="post">
+                <button type="submit">Next Cycle</button>
+            </form>
+            <form action="{{ url_for('reset') }}" method="post">
+                <button type="submit" class="secondary">Reset</button>
+            </form>
+        </section>
+
+        <section class="legend">
+            <span class="pill issue">Issue</span>
+            <span class="pill execute">Execute</span>
+            <span class="pill done">Done</span>
+            <span class="pill stall">Stall</span>
+        </section>
+
+        <section class="table-block">
+            <h2>Instruction Status Table</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Instruction</th>
+                        <th>Issue</th>
+                        <th>Exec Start</th>
+                        <th>Exec End</th>
+                        <th>Write Result</th>
+                        <th>Current State</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for inst in state.instructions %}
+                    <tr class="state-{{ inst.state | lower }}">
+                        <td>{{ inst.text }}</td>
+                        <td>{{ inst.issue_cycle if inst.issue_cycle is not none else '-' }}</td>
+                        <td>{{ inst.exec_start if inst.exec_start is not none else '-' }}</td>
+                        <td>{{ inst.exec_end if inst.exec_end is not none else '-' }}</td>
+                        <td>{{ inst.write_cycle if inst.write_cycle is not none else '-' }}</td>
+                        <td>{{ inst.state }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <section class="table-block">
+            <h2>Reservation Stations Table</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Busy</th>
+                        <th>Op</th>
+                        <th>Vj</th>
+                        <th>Vk</th>
+                        <th>Qj</th>
+                        <th>Qk</th>
+                        <th>Dest</th>
+                        <th>Cycles Left</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rs in state.reservation_stations %}
+                    <tr class="{% if rs.executing %}rs-executing{% endif %}">
+                        <td>{{ rs.name }}</td>
+                        <td>{{ 'Yes' if rs.busy else 'No' }}</td>
+                        <td>{{ rs.op if rs.op else '-' }}</td>
+                        <td>{{ rs.Vj if rs.Vj is not none else '-' }}</td>
+                        <td>{{ rs.Vk if rs.Vk is not none else '-' }}</td>
+                        <td>{{ rs.Qj if rs.Qj else '-' }}</td>
+                        <td>{{ rs.Qk if rs.Qk else '-' }}</td>
+                        <td>{{ rs.dest_reg if rs.dest_reg else '-' }}</td>
+                        <td>{{ rs.cycles_remaining if rs.busy else '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <section class="table-block">
+            <h2>Register Result Status Table</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Register</th>
+                        <th>Value</th>
+                        <th>Waiting On (Qi)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reg in state.registers %}
+                    <tr>
+                        <td>{{ reg.name }}</td>
+                        <td>{{ reg.value }}</td>
+                        <td>{{ reg.qi if reg.qi else '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+</body>
+</html>
