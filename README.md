@@ -37,11 +37,11 @@ Open:
 
 - `http://localhost:5000`
 
-## Screenshot Placeholder
+## Screenshots
 
-Add screenshots here after running the dashboard:
-
-- `docs/screenshot-main.png`
+| Initial state | After advancing cycles | Reset view |
+|---------------|------------------------|------------|
+| ![Tomasulo main dashboard](docs/screenshot-main.png) | ![Tomasulo cycle view](docs/screenshot-cycle.png) | ![Tomasulo reset](docs/screenshot-reset.png) |
 
 ## File Structure
 
